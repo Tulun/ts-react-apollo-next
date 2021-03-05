@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "watch": "npx concurrently -n COMPILER,NODEMON -c yellow,blue 'tsc -w' 'nodemon -w dist -q dist dist/index.js'"
+    "watch": "npx concurrently -k -n COMPILER,NODEMON -c yellow,blue 'tsc -w' 'nodemon -w dist -q dist dist/index.js'"
   },
   "author": "",
   "license": "ISC",
