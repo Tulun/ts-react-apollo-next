@@ -1,4 +1,4 @@
-import { ApolloServer, gql } from "apollo-server-micro";
+import { ApolloServer, gql, UserInputError } from "apollo-server-micro";
 import mysql from "serverless-mysql";
 import { OkPacket } from "mysql";
 import { Resolvers, TaskStatus } from "../../generated/graphql-backend";
@@ -41,12 +41,6 @@ interface ApolloContext {
   db: mysql.ServerlessMysql;
 }
 
-interface Task {
-  id: number;
-  title: string;
-  status: TaskStatus;
-}
-
 interface TaskDbRow {
   id: number;
   title: string;
@@ -58,8 +52,8 @@ type TasksDbQueryResult = TaskDbRow[];
 type TaskDbQueryResult = TaskDbRow[];
 
 const getTaskById = async (id: number, db: mysql.ServerlessMysql) => {
-  const tasks = await context.db.query<TaskDbQueryResult>(
-    "SELECT ID, title, task_status from tasks WHERE id = ?",
+  const tasks = await db.query<TaskDbQueryResult>(
+    "SELECT id, title, task_status FROM tasks WHERE id = ?",
     [id]
   );
 
@@ -94,7 +88,7 @@ const resolvers: Resolvers<ApolloContext> = {
       }));
     },
     async task(parent, args, context) {
-      return getTaskById(args.id, db);
+      return await getTaskById(args.id, context.db);
     },
   },
   Mutation: {
@@ -122,6 +116,7 @@ const resolvers: Resolvers<ApolloContext> = {
         columns.push("task_status = ?");
         sqlParams.push(args.input.status);
       }
+
       sqlParams.push(args.input.id);
 
       await context.db.query(
@@ -129,12 +124,20 @@ const resolvers: Resolvers<ApolloContext> = {
         sqlParams
       );
 
-      const updatedTask = getTaskById(args.input.id, db);
+      const updatedTask = await getTaskById(args.input.id, context.db);
 
       return updatedTask;
     },
-    deleteTask(parent, args, context) {
-      return null;
+    async deleteTask(parent, args, context) {
+      const task = await getTaskById(args.id, context.db);
+
+      if (!task) {
+        throw new UserInputError("Could not find your task.");
+      }
+
+      await context.db.query("DELETE FROM tasks WHERE id = ?", [args.id]);
+
+      return task;
     },
   },
 };
