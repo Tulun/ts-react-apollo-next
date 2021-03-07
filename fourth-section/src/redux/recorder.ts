@@ -1,23 +1,22 @@
-import { Action } from "redux";
-import { RootState } from "./store";
+import { Action } from 'redux';
+import { RootState } from './store';
 
 interface RecorderState {
   dateStart: string;
-  dateEnd: string;
 }
 
-const START = "recorder/start";
-const STOP = "recorder/stop";
+const START = 'recorder/start';
+const STOP = 'recorder/stop';
 
 type StartAction = Action<typeof START>;
 type StopAction = Action<typeof STOP>;
 
 export const start = (): StartAction => ({
-  type: START,
+  type: START
 });
 
 export const stop = (): StopAction => ({
-  type: STOP,
+  type: STOP
 });
 
 export const selectRecorderState = (rootState: RootState) => rootState.recorder;
@@ -25,22 +24,23 @@ export const selectDateStart = (rootState: RootState) =>
   selectRecorderState(rootState).dateStart;
 
 const initialState: RecorderState = {
-  dateStart: "",
-  dateEnd: "",
+  dateStart: ''
 };
 
-const recorderReduer = (
+const recorderReducer = (
   state: RecorderState = initialState,
   action: StartAction | StopAction
 ) => {
   switch (action.type) {
     case START:
       return { ...state, dateStart: new Date().toISOString() };
+
     case STOP:
-      return { ...state, dateStart: "", dateEnd: new Date().toISOString() };
+      return { ...state, dateStart: '' };
+
     default:
       return state;
   }
 };
 
-export default recorderReduer;
+export default recorderReducer;
