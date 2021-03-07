@@ -35,4 +35,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## Docker compose command:
 
-docker exec -i fifth-section_mysql_1 sh -c 'mysql -uroot -p "MYSQL_ROOT_PASSWORD" $MYSQL_DATABASE' < db/schema.sql
+docker exec -i fifth-section_mysql_1 sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" $MYSQL_DATABASE' < db/schema.sql
