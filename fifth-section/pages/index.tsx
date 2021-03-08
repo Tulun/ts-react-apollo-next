@@ -11,14 +11,13 @@ import CreateTaskForm from "../components/CreateTaskForm";
 export default function Home() {
   const result = useTasksQuery();
   const tasks = result.data?.tasks;
-
   return (
     <div>
       <Head>
         <title>Tasks</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <CreateTaskForm />
+      <CreateTaskForm onSuccess={result.refetch} />
       {result.loading ? (
         <p>Loading tasks...</p>
       ) : result.error ? (

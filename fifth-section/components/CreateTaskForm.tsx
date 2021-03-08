@@ -1,9 +1,32 @@
+import { create } from "domain";
 import { useState } from "react";
+import { useCreateTaskMutation } from "../generated/graphql-frontend";
 
-const CreateTaskForm = () => {
+interface Props {
+  onSuccess: () => void;
+}
+
+const CreateTaskForm: React.FC<Props> = ({ onSuccess }) => {
   const [title, setTitle] = useState("");
+  const [createTask, { loading, error }] = useCreateTaskMutation({
+    onCompleted: () => onSuccess(),
+  });
+
   return (
-    <form>
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault();
+        if (!loading) {
+          try {
+            await createTask({ variables: { input: { title } } });
+            setTitle("");
+          } catch (err) {
+            // Log the error.
+          }
+        }
+      }}
+    >
+      {error && <p className="alert-error">An error occured.</p>}
       <input
         type="test"
         name="title"
