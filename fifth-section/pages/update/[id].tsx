@@ -8,6 +8,7 @@ import {
 import { initializeApollo } from "../../lib/client";
 import { useRouter } from "next/router";
 import Error from "next/error";
+import UpdateTaskForm from "../../components/UpdateTaskForm";
 
 const UpdateTask = () => {
   const router = useRouter();
@@ -26,7 +27,7 @@ const UpdateTask = () => {
   ) : error ? (
     <p>An error occured.</p>
   ) : task ? (
-    <div>{task.title}</div>
+    <UpdateTaskForm initialValues={{ title: task.title }} />
   ) : (
     <p>Task not found.</p>
   );
