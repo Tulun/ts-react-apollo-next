@@ -1,11 +1,12 @@
-import { OkPacket } from "mysql";
 import { Resolvers, TaskStatus } from "../generated/graphql-backend";
-import mysql from "serverless-mysql";
+import { ServerlessMysql } from "serverless-mysql";
+import { OkPacket } from "mysql";
 import { UserInputError } from "apollo-server-micro";
 
 interface ApolloContext {
-  db: mysql.ServerlessMysql;
+  db: ServerlessMysql;
 }
+
 interface TaskDbRow {
   id: number;
   title: string;
@@ -16,7 +17,7 @@ type TasksDbQueryResult = TaskDbRow[];
 
 type TaskDbQueryResult = TaskDbRow[];
 
-const getTaskById = async (id: number, db: mysql.ServerlessMysql) => {
+const getTaskById = async (id: number, db: ServerlessMysql) => {
   const tasks = await db.query<TaskDbQueryResult>(
     "SELECT id, title, task_status FROM tasks WHERE id = ?",
     [id]
