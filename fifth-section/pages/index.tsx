@@ -1,46 +1,32 @@
 import Head from "next/head";
-import styles from "../styles/Home.module.css";
-import { gql, useQuery } from "@apollo/client";
 import { initializeApollo } from "../lib/client";
-
-const TasksQueryDocument = gql`
-  query Tasks {
-    tasks {
-      id
-      title
-      status
-    }
-  }
-`;
-
-interface TasksQuery {
-  tasks: {
-    id: number;
-    title: string;
-    status: string;
-  }[];
-}
+import {
+  TasksDocument,
+  TasksQuery,
+  useTasksQuery,
+} from "../generated/graphql-frontend";
+import TaskList from "../components/TaskList";
 
 export default function Home() {
-  const result = useQuery<TasksQuery>(TasksQueryDocument);
+  const result = useTasksQuery();
   const tasks = result.data?.tasks;
 
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>Tasks</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {tasks &&
-        tasks.length &&
-        tasks.map(({ id, title, status }) => {
-          return (
-            <div key={id}>
-              {title} ({status})
-            </div>
-          );
-        })}
+      {result.loading ? (
+        <p>Loading tasks...</p>
+      ) : result.error ? (
+        <p>An error occured.</p>
+      ) : tasks && tasks.length ? (
+        <TaskList tasks={tasks} />
+      ) : (
+        <p className="no-tasks-message">You've got no tasks.</p>
+      )}
     </div>
   );
 }
@@ -49,7 +35,7 @@ export const getStaticProps = async () => {
   const apolloClient = initializeApollo();
 
   await apolloClient.query<TasksQuery>({
-    query: TasksQueryDocument,
+    query: TasksDocument,
   });
 
   return {

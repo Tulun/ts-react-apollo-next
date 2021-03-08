@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@apollo/client": "^3.3.11",
+    "@graphql-codegen/typescript-operations": "^1.17.15",
+    "@graphql-codegen/typescript-react-apollo": "^2.2.2",
     "apollo-server-micro": "^2.21.0",
     "graphql": "^15.5.0",
     "graphql-tools": "^7.0.4",
