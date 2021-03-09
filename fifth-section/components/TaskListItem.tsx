@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { Task, useDeleteTaskMutation } from "../generated/graphql-frontend";
 import Link from "next/link";
+import { Reference } from "@apollo/client";
 
 interface Props {
   task: Task;
@@ -10,10 +11,30 @@ interface Props {
 const TaskListItem: React.FC<Props> = ({ task }) => {
   const [deleteTask, { loading, error }] = useDeleteTaskMutation({
     variables: { id: task.id },
+    errorPolicy: "all",
+    update: (cache, result) => {
+      const deletedTask = result.data?.deleteTask;
+
+      if (deletedTask) {
+        cache.modify({
+          fields: {
+            tasks(taskRefs: Reference[], { readField }) {
+              return taskRefs.filter((taskRef) => {
+                return readField("id", taskRef) !== deletedTask.id;
+              });
+            },
+          },
+        });
+      }
+    },
   });
 
-  const handleDeleteClick = () => {
-    deleteTask();
+  const handleDeleteClick = async () => {
+    try {
+      await deleteTask();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   useEffect(() => {
