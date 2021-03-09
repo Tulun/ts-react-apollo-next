@@ -9,12 +9,12 @@ const TaskFilter = () => {
         </Link>
       </li>
       <li>
-        <Link href="/[status]" as="/active" scroll={false}>
+        <Link href="/[status]" as="/active" scroll={false} shallow>
           <a>Active</a>
         </Link>
       </li>
       <li>
-        <Link href="/[status]" as="/completed" scroll={false}>
+        <Link href="/[status]" as="/completed" scroll={false} shallow>
           <a>Completed</a>
         </Link>
       </li>

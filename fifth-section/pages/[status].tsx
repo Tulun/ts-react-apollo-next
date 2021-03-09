@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import Head from "next/head";
 import { initializeApollo } from "../lib/client";
 import {
@@ -21,11 +22,23 @@ export default function Home() {
   const router = useRouter();
   const status =
     typeof router.query.status === "string" ? router.query.status : undefined;
+
+  const prevStatus = useRef(status);
+
+  useEffect(() => {
+    prevStatus.current = status;
+  }, [status]);
+
   if (status !== undefined && !isTaskStatus(status)) {
     return <Error statusCode={404} />;
   }
 
-  const result = useTasksQuery({ variables: { status } });
+  const result = useTasksQuery({
+    variables: { status },
+    fetchPolicy:
+      prevStatus.current === status ? "cache-first" : "cache-and-network",
+  });
+
   const tasks = result.data?.tasks;
   return (
     <div>
