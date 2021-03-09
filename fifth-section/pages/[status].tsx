@@ -47,7 +47,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <CreateTaskForm onSuccess={result.refetch} />
-      {result.loading ? (
+      {result.loading && !tasks ? (
         <p>Loading tasks...</p>
       ) : result.error ? (
         <p>An error occured.</p>
