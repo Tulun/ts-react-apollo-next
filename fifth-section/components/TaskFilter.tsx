@@ -8,7 +8,7 @@ const TaskFilter: React.FC<Props> = ({ status }) => {
   return (
     <ul className="task-filter">
       <li>
-        <Link href="/" scroll={false}>
+        <Link href="/" scroll={false} shallow>
           <a className={!status ? "task-filter-active" : ""}>All</a>
         </Link>
       </li>
