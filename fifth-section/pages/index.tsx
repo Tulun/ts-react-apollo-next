@@ -1,1 +1,1 @@
-export { default } from "./[status]";
+export { default, getServerSideProps } from "./[status]";
